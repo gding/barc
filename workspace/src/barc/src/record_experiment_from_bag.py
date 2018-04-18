@@ -52,13 +52,13 @@ class RecordExperiment():
         
         # get parameters
         self.experiment_name     = bag_file
-        self.camera_on           = False
+        self.camera_on           = True
       
         # wait for ROS services
-        rospy.wait_for_service('send_data')
+    #    rospy.wait_for_service('send_data')
 
         # resigter proxy service
-        self.send_data = rospy.ServiceProxy('send_data', DataForward, persistent=True)
+    #    self.send_data = rospy.ServiceProxy('send_data', DataForward, persistent=True)
 
  
         # ensure data storage directories exist
@@ -87,7 +87,7 @@ class RecordExperiment():
 
         # upload all data
         print("starting to upload data ...")
-        self.upload_data()
+       # self.upload_data()
 
     def extract_images(self):
         # create directory for images
@@ -97,7 +97,7 @@ class RecordExperiment():
 
         # extract images
         idx = 0
-        for topic, msg, t in self.bag.read_messages( topics='/image_transformed/compressed/' ):
+        for topic, msg, t in self.bag.read_messages( topics='/image_raw/compressed/' ):
             nparr = np.fromstring(msg.data, np.uint8)
             img_data = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
             cv2.imwrite( experiment_img_dir + '/%5d.jpg' % idx, img_data)
@@ -226,7 +226,7 @@ class RecordExperiment():
 
 if __name__ == '__main__':
     # initialize the node
-    rospy.init_node('record_experiment')
+   # rospy.init_node('record_experiment')
 
     try:
         node = RecordExperiment()
