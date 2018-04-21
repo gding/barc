@@ -352,13 +352,13 @@ class image_processing_node():
 
     def calc_x_newPixel_to_y_Inertial(self,x_newPixel,y_newPixel):
         # Transforms the xnewpixel into yinertial frame
-        y_Inertial = #FILL IN HERE
+        y_Inertial = -x_newPixel*(y_newPixel*(11/43)+11) 
         y_Inertial=y_Inertial*0.3048 #convert ft to m
         return y_Inertial
 
     def calc_y_newPixel_to_x_Inertial(self,y_newPixel):
         # Transforms the ynewpixel into xinertial frame
-        x_Inertial = #FILL IN HERE
+        x_Inertial = 0.0003*y_newPixel**2 - 0.0097*y_newPixel + 1.9606
         x_Inertial=x_Inertial*0.3048 #convert ft to m
         return x_Inertial
     #########################################################################
@@ -412,16 +412,16 @@ class image_processing_node():
                 u_bar = [[v_ref],[beta_des]];
 
 
-                Ac = # TO DO
-                Bc = # TO DO
-
-                Q = # TO DO
-                R = # TO DO
+                Ac = np.matrix([[0, 0, -v_ref*sin(psi_des+beta_des)],[0, 0, v_ref*cos(psi_des+beta_des)],[0, 0, 0]]);
+                Bc = np.matrix([[cos(psi_des+beta_des), -v_ref*sin(psi_des+beta_des)],[sin(psi_des+beta_des), v_ref*cos(psi_des+beta_des)],[sin(beta_des)/lr, v_ref*cos(beta_des)/lr]])
+                
+                Q = np.matrix([[50, 0, 0],[0, 50, 0],[0, 0, 1]]);
+                R = np.matrix([[25, 0 ],[0, 1]]);        
 
                 # Compute the LQR controller
-                K, X, closedLoopEigVals = # TO DO
+                K, X, closedLoopEigVals = controlpy.synthesis.controller_lqr_discrete_from_continuous_time(Ac, Bc, Q, R, dt)
 
-                u_Opt = # TO DO
+                u_Opt = -K*(z-z_ref)+u_bar 
                 vOpt = u_Opt[0,0]
                 betaOpt = u_Opt[1,0]
                 deltaOpt = atan2(((lf+lr)*tan(u_Opt[1,0])),lr)
