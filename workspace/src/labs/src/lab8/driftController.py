@@ -89,20 +89,20 @@ def main():
             u_servo = u_servo_neutral
 
         # perform aggresive turn and accelerate
-        elif t < t_straight + Dt:
-            if not turn:
-                rospy.logwarn("Turning and accelerating ...")
-                turn = True
-            u_motor = F1
-            u_servo = df
+        #elif t < t_straight + Dt:
+        #    if not turn:
+        #        rospy.logwarn("Turning and accelerating ...")
+        #        turn = True
+        #    u_motor = F1
+        #    u_servo = df
 
         # apply brake
-        else:
-            if not brake:   
-                rospy.logwarn("Braking ! ...")
-                brake = True
-            u_motor = F2
-            u_servo = df
+        #else:
+        #    if not brake:   
+        #        rospy.logwarn("Braking ! ...")
+        #        brake = True
+        #    u_motor = F2
+        #    u_servo = df
 
         # publish control command
         rospy.logwarn("v1 = {}".format(enc.vhat_m1))
