@@ -48,7 +48,7 @@ def main():
     F2              = 990   # brake
 
     u_motor_neutral = 1500
-    u_servo_neutral = 1540
+    u_servo_neutral = 1531
     u_motor         = u_motor_neutral
     u_servo         = u_servo_neutral
 
