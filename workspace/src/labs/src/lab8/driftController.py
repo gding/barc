@@ -42,13 +42,13 @@ def main():
 
     # sample input parameters for drift
     s               = 3.0
-    Dt              = uniform(0,0.8)
-    F1              = int( uniform( 1750, 1800 ) )
-    df              = int( uniform( 1750, 1800 ) )
+    Dt              = 0.291194759363
+    F1              = 1892
+    df              = 1876
     F2              = 990   # brake
 
     u_motor_neutral = 1500
-    u_servo_neutral = 1531
+    u_servo_neutral = 1540
     u_motor         = u_motor_neutral
     u_servo         = u_servo_neutral
 
@@ -84,28 +84,31 @@ def main():
             u_servo = u_ff + int(u_fb)
 
             t_straight  = t
-        else:
-            u_motor = u_motor_neutral
-            u_servo = u_servo_neutral
+        #else:
+        #    u_motor = u_motor_neutral
+        #    u_servo = u_servo_neutral
 
         # perform aggresive turn and accelerate
-        #elif t < t_straight + Dt:
-        #    if not turn:
-        #        rospy.logwarn("Turning and accelerating ...")
-        #        turn = True
-        #    u_motor = F1
-        #    u_servo = df
+        elif t < t_straight + Dt:
+            if not turn:
+                rospy.logwarn("Turning and accelerating ...")
+                turn = True
+            u_motor = F1
+            u_servo = df
 
         # apply brake
-        #else:
-        #    if not brake:   
-        #        rospy.logwarn("Braking ! ...")
-        #        brake = True
-        #    u_motor = F2
-        #    u_servo = df
+        else:
+            if not brake:   
+                rospy.logwarn("Braking ! ...")
+                brake = True
+            u_motor = F2
+            u_servo = df
 
         # publish control command
-        rospy.logwarn("v1 = {}".format(enc.vhat_m1))
+        rospy.logwarn("Dt = {}".format(Dt))
+    	rospy.logwarn("F1 (acceleration) = {}".format(F1))
+    	rospy.logwarn("df (steering) = {}".format(df))
+	rospy.logwarn("v1 = {}".format(enc.vhat_m1))
         rospy.logwarn("s1 = {}".format(enc.s_m1))
         rospy.logwarn("yaw = {}".format(imu.dy))
         ecu_pub.publish( ECU(u_motor, u_servo) )
