@@ -55,7 +55,7 @@ class EncoderModel:
         
         # compute speed with second-order, backwards-finite-difference estimate
         # compute distance
-        self.vhat_m1    = self.r_tire*(ang_mean - 4*self.ang_km1 + 3*self.ang_km2)/(dt)
+        self.vhat_m1    = self.r_tire*(3*ang_mean - 4*self.ang_km1 + self.ang_km2)/(2*dt)
         self.s_m1       += self.vhat_m1*dt
 
         # update
