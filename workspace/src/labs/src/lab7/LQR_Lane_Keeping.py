@@ -104,8 +104,13 @@ class image_processing_node():
                     #######cv2.imshow('hsv',hsv[270:480,:])
 
                     # define range of blue color in HSV (B,G,R)
-                    lower_yellow = np.array([0,180,100])
-                    upper_yellow = np.array([50,255,255])
+                    # lower_yellow = np.array([0,180,100])
+                    # upper_yellow = np.array([50,255,255])
+                    
+                    ### <ADDED CODE> ###
+                    lower_yellow = np.array([0,100,180])
+                    upper_yellow = np.array([50,280,255])
+                    ### </ADDED CODE> ###
 
                     # Threshold the HSV image to get only blue colors
                     edges = cv2.inRange(hsv, lower_yellow, upper_yellow) #0.03s
