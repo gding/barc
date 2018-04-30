@@ -119,14 +119,14 @@ class image_processing_node():
 
                     #lower_white = np.array([170,150,150])
                     #upper_white = np.array([255,255,255])
-                    ### </ADDED CODE> ###
 
                     # Threshold the HSV image to get only blue colors
                     # edges = cv2.inRange(hsv, lower_yellow, upper_yellow) #0.03s
                     edges = cv2.inRange(hsv, lower_orange, upper_orange) #0.03s
                     # red_edges = cv2.inRange(hsv, lower_red, upper_red) #0.03s
                     # white_edges = cv2.inRange(hsv, lower_white, upper_white) #0.03s
-
+                    # edges = cv2.bitwise_or(red_edges,white_edges)
+                    ### </ADDED CODE> ###
                     
                     #edges = cv2.cvtColor(edges, cv2.COLOR_BGR2GRAY)
                     #cv2.imshow("hsv to gray",edges)
