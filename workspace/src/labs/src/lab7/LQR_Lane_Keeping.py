@@ -20,8 +20,8 @@ from controlpy import analysis
 
 # state estimation node
 class image_processing_node():
-    def __init__(self):    
-        
+    def __init__(self):
+
         self.vid = cv2.VideoCapture("/dev/video6")
         self.vid.set(12,5) #contrast
         self.vid.set(13,255) #saturation
@@ -29,7 +29,7 @@ class image_processing_node():
         # Calibration Matrices
         self.mtx = np.array([[592.156892, 0.000000, 326.689246], [0.000000, 584.923917, 282.822026], [0.000000, 0.000000, 1.000000]])
         self.dist = np.array([-0.585868, 0.248490, -0.023236, -0.002907, 0.000000])
-        self.rel,self.dst = self.vid.read() 
+        self.rel,self.dst = self.vid.read()
         # Camera resolution
         self.w = 640
         self.h = 480
@@ -49,11 +49,11 @@ class image_processing_node():
 
         self.dt = self.ts
         self.count = 0
-        self.incount = 0 
-        self.total = 0 
-        self.avg = 0 
-        self.total2 = 0 
-        self.avg2 = 0 
+        self.incount = 0
+        self.total = 0
+        self.avg = 0
+        self.total2 = 0
+        self.avg2 = 0
         self.publish_image = False;
         self.timeprev = time.time()-self.dt
 
@@ -87,7 +87,7 @@ class image_processing_node():
 
                 self.cv_image = cv2.remap(self.dst,self.mapx,self.mapy,cv2.INTER_LINEAR) #Undistorts the fisheye image to rectangular
                 self.x,self.y,self.w,self.h = self.roi
-                self.dst = self.dst[self.y:self.y+self.h, self.x:self.x+self.w]      
+                self.dst = self.dst[self.y:self.y+self.h, self.x:self.x+self.w]
 
                 # yellow = True makes the edge detection search for a yellow track using HSV. False will use grayscale and search for any edge regardless of color
                 yellow = True
@@ -97,28 +97,28 @@ class image_processing_node():
                     cropped[0:280,0:640] = 0
                     #cropped = cv2.GaussianBlur(cropped,(kernel_size,kernel_size),0) #0.017s
                     #cropped = cv2.medianBlur(cropped,kernel_size)
- 
-                    hsv = cv2.cvtColor(cropped, cv2.COLOR_BGR2HSV) #.004 
+
+                    hsv = cv2.cvtColor(cropped, cv2.COLOR_BGR2HSV) #.004
 
                     #hsv = cv2.GaussianBlur(hsv,(kernel_size,kernel_size),0)
                     #######cv2.imshow('hsv',hsv[270:480,:])
-                    
+
                     ### YELLOW LANES ###
                     # define range of blue color in HSV (B,G,R)
                     # lower_yellow = np.array([0,180,100])
                     # upper_yellow = np.array([50,255,255])
-                    
+
                     ### <ADDED CODE> ###
                     ### ORANGE LANES ###
                     # lower_orange = np.array([0,100,180])
                     # upper_orange = np.array([50,280,255])
 
                     ### RED AND WHITE LANES ###
-                    lower_red = np.array([0,0,180])
-                    upper_red = np.array([50,120,255])
+                    lower_red = np.array([0,40,110])
+                    upper_red = np.array([20,80,160])
 
-                    lower_white = np.array([170,150,150])
-                    upper_white = np.array([255,255,255])
+                    lower_white = np.array([100,120,80])
+                    upper_white = np.array([150,170,130])
 
                     # Threshold the HSV image to get only blue colors
                     # edges = cv2.inRange(hsv, lower_yellow, upper_yellow) #0.03s
@@ -127,7 +127,7 @@ class image_processing_node():
                     white_edges = cv2.inRange(hsv, lower_white, upper_white) #0.03s
                     edges = cv2.bitwise_or(red_edges,white_edges)
                     ### </ADDED CODE> ###
-                    
+
                     #edges = cv2.cvtColor(edges, cv2.COLOR_BGR2GRAY)
                     #cv2.imshow("hsv to gray",edges)
                     #cv2.imshow("Edges",edges[270:480,:])
@@ -149,18 +149,18 @@ class image_processing_node():
                     edgescropped = edges
 
                 #print(time.time() - self.timeprev)
-                
+
                 alpha = .6
                 beta = 1.
                 gamma = 0
 
-                # Colored = True makes the path show up on top of the colored image. 
+                # Colored = True makes the path show up on top of the colored image.
                 colored = False
                 if colored:
                     line_img_color = np.zeros(self.cv_image.shape, dtype=np.uint8)
                     midpointlist,leftlist,rightlist = self.draw_lines(line_img_color,edgescropped)
                     LinesDrawn2_color = cv2.addWeighted(self.cv_image,alpha,line_img_color,beta,gamma)
-                else: 
+                else:
                     edges_color = cv2.cvtColor(edgescropped, cv2.COLOR_GRAY2RGB)
                     line_img_color = np.zeros(edges_color.shape, dtype=np.uint8)
                     midpointlist,leftlist,rightlist = self.draw_lines(line_img_color,edges)
@@ -186,7 +186,7 @@ class image_processing_node():
 
                 # Waitkey is necesarry to update image
                 cv2.waitKey(3)
-     
+
                 self.rate.sleep()
             except IOError, (ErrorNumber, ErrorMessage):
                 print('HERE')
@@ -216,7 +216,7 @@ class image_processing_node():
                     leftbound = x_left-boxsize
                     if leftbound <0:
                         leftbound=0
-                    
+
                     Top = img[y_left-boxsize,np.arange(leftbound,x_left+boxsize)]
                     Bottom = img[y_left+boxsize,np.arange(leftbound,x_left+boxsize)]
                     Right = img[np.arange(y_left-boxsize,y_left+boxsize),x_left+boxsize]
@@ -255,8 +255,8 @@ class image_processing_node():
         return (x_left, x_right,y_left,y_right)
     ##############################################################################################
     def draw_lines(self,img, edges, color=[0, 0,255 ], thickness=3):
-        height, width = edges.shape 
-        index_x = (width)//2        
+        height, width = edges.shape
+        index_x = (width)//2
         offset = 0
         previous_x = index_x
 
@@ -275,7 +275,7 @@ class image_processing_node():
         i=0
         for y_base in xrange(y_newPixel_min,y_newPixel_max,interval):
             #y_base = 150 #20 # this represents 3" in front of the car
-            index_y = height - y_base 
+            index_y = height - y_base
             index_x = previous_x
             x_left, x_right,y_left,y_right = self.find_offset_in_lane(edges, index_x, index_y, width)
             if (not(y_base==y_newPixel_min) and (x_right-x_left)<converge_limit):
@@ -305,7 +305,7 @@ class image_processing_node():
                 midpointlist = np.concatenate((midpointlist,midpts))
                 leftlist = np.concatenate((leftlist,leftpts))
                 rightlist = np.concatenate((rightlist,rightpts))
-            if (not(y_base==y_newPixel_min)): 
+            if (not(y_base==y_newPixel_min)):
                 cv2.line(img, (midpointx, midpointy),(previous_x, previous_y), (0,255,255),3)
             cv2.circle(img, (x_right,y_right), 4, (0,255,255), -1)
             cv2.circle(img, (x_left,  y_left), 4, (0,255,255), -1)
@@ -323,13 +323,13 @@ class image_processing_node():
                 cv2.circle(img, (self.statepoints[0][i],self.statepoints[1][i]), 4, (0, 255,0), -1)
             if endtrack:
                 break
-            i+=1  
-        return midpointlist,leftlist,rightlist 
+            i+=1
+        return midpointlist,leftlist,rightlist
 
     def publish_states(self,midpointlist,leftlist,rightlist):
         midpointlist[:,0] = midpointlist[:,0]-320 # Convert x_pixel to x_newpixel
         midpointlist[:,1] = 480-midpointlist[:,1] # Convert y_pixel to y_newpixel
-        if ((self.count == 5) and self.printme): 
+        if ((self.count == 5) and self.printme):
             print("\nReference Trajectory")
             print(midpointlist)
 
@@ -345,7 +345,7 @@ class image_processing_node():
         #self.reference_trajectory.psi = midlistpsi.tolist()
         if ((self.count == 5) and self.printme):
             print(self.reference_trajectory)
-        
+
         self.reference_trajectory_pub.publish(self.reference_trajectory)
         ####################################################################
         # Uncomment this next line when you are ready to use LQR
@@ -359,18 +359,18 @@ class image_processing_node():
         y_newPixel_list = inputarray[:,1]
         transformed_y_Inertial_list = np.float32(x_newPixel_list)
         transformed_x_Inertial_list = np.float32(y_newPixel_list)
-        
+
         for i in np.arange(len(x_newPixel_list)):
             x = x_newPixel_list[i]
             y = y_newPixel_list[i]
-           
+
             transformed_y_Inertial_list[i] = self.calc_x_newPixel_to_y_Inertial(x,y) #number of xpixels from center divided by xpixels per foot
             transformed_x_Inertial_list[i] = self.calc_y_newPixel_to_x_Inertial(y)
         return transformed_x_Inertial_list,transformed_y_Inertial_list
 
     def calc_x_newPixel_to_y_Inertial(self,x_newPixel,y_newPixel):
         # Transforms the xnewpixel into yinertial frame
-        y_Inertial = -x_newPixel*(y_newPixel*(11/43)+11) 
+        y_Inertial = -x_newPixel*(y_newPixel*(11/43)+11)
         y_Inertial=y_Inertial*0.3048 #convert ft to m
         return y_Inertial
 
@@ -432,14 +432,14 @@ class image_processing_node():
 
                 Ac = np.matrix([[0, 0, -v_ref*sin(psi_des+beta_des)],[0, 0, v_ref*cos(psi_des+beta_des)],[0, 0, 0]]);
                 Bc = np.matrix([[cos(psi_des+beta_des), -v_ref*sin(psi_des+beta_des)],[sin(psi_des+beta_des), v_ref*cos(psi_des+beta_des)],[sin(beta_des)/lr, v_ref*cos(beta_des)/lr]])
-                
+
                 Q = np.matrix([[50, 0, 0],[0, 50, 0],[0, 0, 1]]);
-                R = np.matrix([[25, 0 ],[0, 1]]);        
+                R = np.matrix([[25, 0 ],[0, 1]]);
 
                 # Compute the LQR controller
                 K, X, closedLoopEigVals = controlpy.synthesis.controller_lqr_discrete_from_continuous_time(Ac, Bc, Q, R, dt)
 
-                u_Opt = -K*(z-z_ref)+u_bar 
+                u_Opt = -K*(z-z_ref)+u_bar
                 vOpt = u_Opt[0,0]
                 betaOpt = u_Opt[1,0]
                 deltaOpt = atan2(((lf+lr)*tan(u_Opt[1,0])),lr)
