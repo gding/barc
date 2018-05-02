@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # Author: Tony Zheng
-# MEC231A BARC Project 
+# MEC231A BARC Project
 
 import rospy
 import time
@@ -38,8 +38,12 @@ def enc_callback(data):
     n_BR = data.BR
 
     # compute the average encoder measurement
+<<<<<<< 788354075b30aed3675601a88ef2edc39a62e611
     # n_mean = (n_FL + n_FR)/2
     n_mean = n_FL
+=======
+    n_mean = (n_FL + n_FR)/2
+>>>>>>> old
 
     # transfer the encoder measurement to angular displacement
     ang_mean = n_mean*2*pi/8
@@ -47,7 +51,7 @@ def enc_callback(data):
     # compute time elapsed
     tf = time.time()
     dt = tf - t0
-    
+
     # compute speed with second-order, backwards-finite-difference estimate
     v_meas    = r_tire*(3*ang_mean - 4*ang_km1 + ang_km2)/(2*dt)
     # rospy.logwarn("speed = {}".format(v_meas))
@@ -104,11 +108,15 @@ class PID():
 
     def acc_calculate(self, speed_reference, speed_current):
         self.error = speed_reference - speed_current
+<<<<<<< 788354075b30aed3675601a88ef2edc39a62e611
         print(self.error)
         
+=======
+
+>>>>>>> old
         # Propotional control
         self.P_effect = self.kp*self.error
-        
+
         # Integral control
         self.integrator = self.integrator + self.error
         ## Anti windup
@@ -117,14 +125,14 @@ class PID():
         if self.integrator <= self.integrator_min:
             self.integrator = self.integrator_min
         self.I_effect = self.ki*self.integrator
-        
+
         # Derivative control
         self.derivator = self.error - self.derivator
         self.D_effect = self.kd*self.derivator
         self.derivator = self.error
 
         acc = self.P_effect + self.I_effect + self.D_effect
-        
+
         if acc <= 0:
             acc = 20
         return acc
@@ -133,12 +141,12 @@ class PID():
 def inputToPWM():
     global motor_pwm, servo_pwm, motor_pwm_offset, servo_pwm_offset
     global v_ref, v_meas
-    
+
     # initialize node
     rospy.init_node('inputToPWM', anonymous=True)
-    
+
     global pubname , newECU , subname, move , still_moving
-    newECU = ECU() 
+    newECU = ECU()
     newECU.motor = 1500
     newECU.servo = 1530
     move = False
@@ -157,9 +165,13 @@ def inputToPWM():
     ts          = 1.0 / loop_rate
     rate        = rospy.Rate(loop_rate)
     t0          = time.time()
-     
+
     # Initialize the PID controller
+<<<<<<< 788354075b30aed3675601a88ef2edc39a62e611
     longitudinal_control = PID(kp=50, ki=1, kd=1)
+=======
+    longitudinal_control = PID(kp=70, ki=5, kd=0)
+>>>>>>> old
     maxspeed = 1700
     minspeed = 1300
 
@@ -174,7 +186,11 @@ def inputToPWM():
 
             if (not(move) or not(still_moving)):
                 motor_pwm = 1500
+<<<<<<< 788354075b30aed3675601a88ef2edc39a62e611
                 servo_pwm = 1540
+=======
+                servo_pwm = 1530
+>>>>>>> old
 
             # publish information
             pubname.publish( ECU(motor_pwm, servo_pwm) )
