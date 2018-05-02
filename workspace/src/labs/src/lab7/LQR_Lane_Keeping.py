@@ -114,11 +114,11 @@ class image_processing_node():
                     # upper_orange = np.array([50,280,255])
 
                     ### RED AND WHITE LANES ###
-                    lower_red = np.array([0,40,110])
+                    lower_red = np.array([0,10,60])
                     upper_red = np.array([20,80,160])
 
                     lower_white = np.array([100,120,80])
-                    upper_white = np.array([150,170,130])
+                    upper_white = np.array([170,170,170])
 
                     # Threshold the HSV image to get only blue colors
                     # edges = cv2.inRange(hsv, lower_yellow, upper_yellow) #0.03s
