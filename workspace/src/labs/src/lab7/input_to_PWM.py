@@ -38,7 +38,10 @@ def enc_callback(data):
     n_BR = data.BR
 
     # compute the average encoder measurement
-    # n_mean = (n_FL + n_FR)/2
+    """
+    CHANGE THIS DEPENDING ON WHICH ENCODERS WORK
+    """
+    # n_mean = (n_FL + n_FR + n_BL)/3
     n_mean = n_FL
 
     # transfer the encoder measurement to angular displacement
@@ -62,9 +65,9 @@ def start_callback(data):
     global move, still_moving
     #print("2")
     #print(move)
-    if data.linear.x > 0:
+    if data.linear.x >0:
         move = True
-    elif data.linear.x < 0:
+    elif data.linear.x <0:
         move = False
     #print("3")
     #print(move)
@@ -82,7 +85,7 @@ def moving_callback_function(data):
 def callback_function(data):
     global move, still_moving, v_ref, servo_pwm
     v_ref = data.vel
-    servo_pwm = (data.delta*180/3.1416-53.6364)/-0.0346
+    servo_pwm = (data.delta*180/3.1415-53.6364)/-0.0346
 
     servomax = 1800
     servomin = 1200
@@ -93,7 +96,7 @@ def callback_function(data):
 
 
 class PID():
-    def __init__(self, kp=1, ki=1, kd=0, integrator=0, derivator=0):
+    def __init__(self, kp=1, ki=1, kd=1, integrator=0, derivator=0):
         self.kp = kp
         self.ki = ki
         self.kd = kd
@@ -104,7 +107,6 @@ class PID():
 
     def acc_calculate(self, speed_reference, speed_current):
         self.error = speed_reference - speed_current
-        print(self.error)
         
         # Propotional control
         self.P_effect = self.kp*self.error
@@ -151,7 +153,6 @@ def inputToPWM():
     subname = rospy.Subscriber('uOpt', Input, callback_function)
     rospy.Subscriber('moving', Moving, moving_callback_function)
     rospy.Subscriber('encoder', Encoder, enc_callback)
-
     # set node rate
     loop_rate   = 40
     ts          = 1.0 / loop_rate
@@ -159,9 +160,9 @@ def inputToPWM():
     t0          = time.time()
      
     # Initialize the PID controller
-    longitudinal_control = PID(kp=50, ki=1, kd=1)
+    longitudinal_control = PID(kp=70, ki=5, kd=1)
     maxspeed = 1700
-    minspeed = 1300
+    minspeed = 1400
 
     while not rospy.is_shutdown():
         try:
@@ -172,9 +173,9 @@ def inputToPWM():
             elif (motor_pwm>maxspeed):
                 motor_pwm = maxspeed
 
-            if (not(move) or not(still_moving)):
+            if ((move == False) or (still_moving == False)):
                 motor_pwm = 1500
-                servo_pwm = 1540
+                servo_pwm = 1550
 
             # publish information
             pubname.publish( ECU(motor_pwm, servo_pwm) )
