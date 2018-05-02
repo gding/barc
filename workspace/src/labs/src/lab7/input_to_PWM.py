@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 # Author: Tony Zheng
 # MEC231A BARC Project
 
@@ -104,12 +103,8 @@ class PID():
 
     def acc_calculate(self, speed_reference, speed_current):
         self.error = speed_reference - speed_current
-<<<<<<< 788354075b30aed3675601a88ef2edc39a62e611
         print(self.error)
-        
-=======
 
->>>>>>> old
         # Propotional control
         self.P_effect = self.kp*self.error
 
@@ -163,15 +158,7 @@ def inputToPWM():
     t0          = time.time()
 
     # Initialize the PID controller
-<<<<<<< 757167d896b6371fb5dbed97618d7242e68cdfb9
-<<<<<<< 788354075b30aed3675601a88ef2edc39a62e611
-    longitudinal_control = PID(kp=50, ki=1, kd=1)
-=======
-    longitudinal_control = PID(kp=70, ki=5, kd=0)
->>>>>>> old
-=======
-    longitudinal_control = PID(kp=1, ki=1, kd=0)
->>>>>>> otaku
+    longitudinal_control = PID(kp=70, ki=5, kd=1)
     maxspeed = 1700
     minspeed = 1300
 
@@ -186,11 +173,7 @@ def inputToPWM():
 
             if (not(move) or not(still_moving)):
                 motor_pwm = 1500
-<<<<<<< 788354075b30aed3675601a88ef2edc39a62e611
-                servo_pwm = 1540
-=======
                 servo_pwm = 1530
->>>>>>> old
 
             # publish information
             pubname.publish( ECU(motor_pwm, servo_pwm) )
