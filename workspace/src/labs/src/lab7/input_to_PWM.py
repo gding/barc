@@ -61,9 +61,9 @@ def start_callback(data):
     global move, still_moving
     #print("2")
     #print(move)
-    if data.linear.x >0:
+    if data.linear.x > 0:
         move = True
-    elif data.linear.x <0:
+    elif data.linear.x < 0:
         move = False
     #print("3")
     #print(move)
@@ -81,7 +81,7 @@ def moving_callback_function(data):
 def callback_function(data):
     global move, still_moving, v_ref, servo_pwm
     v_ref = data.vel
-    servo_pwm = (data.delta*180/3.1415-53.6364)/-0.0346
+    servo_pwm = (data.delta*180/3.1416-53.6364)/-0.0346
 
     servomax = 1800
     servomin = 1200
@@ -169,7 +169,7 @@ def inputToPWM():
             elif (motor_pwm>maxspeed):
                 motor_pwm = maxspeed
 
-            if ((move == False) or (still_moving == False)):
+            if (not(move) or not(still_moving)):
                 motor_pwm = 1500
                 servo_pwm = 1530
 

@@ -35,7 +35,7 @@ class image_processing_node():
         self.h = 480
 
         # Reference velocity
-        self.v_ref = 1
+        self.v_ref = 0.1
 
         # Number of moving average points
         self.sx = 5
@@ -97,28 +97,41 @@ class image_processing_node():
                     cropped[0:280,0:640] = 0
                     #cropped = cv2.GaussianBlur(cropped,(kernel_size,kernel_size),0) #0.017s
                     #cropped = cv2.medianBlur(cropped,kernel_size)
-
+ 
                     hsv = cv2.cvtColor(cropped, cv2.COLOR_BGR2HSV) #.004 
 
                     #hsv = cv2.GaussianBlur(hsv,(kernel_size,kernel_size),0)
                     #######cv2.imshow('hsv',hsv[270:480,:])
-
+                    
+                    ### YELLOW LANES ###
                     # define range of blue color in HSV (B,G,R)
                     # lower_yellow = np.array([0,180,100])
                     # upper_yellow = np.array([50,255,255])
                     
                     ### <ADDED CODE> ###
-                    lower_yellow = np.array([0,100,180])
-                    upper_yellow = np.array([50,280,255])
-                    ### </ADDED CODE> ###
+                    ### ORANGE LANES ###
+                    # lower_orange = np.array([0,100,180])
+                    # upper_orange = np.array([50,280,255])
+
+                    ### RED AND WHITE LANES ###
+                    lower_red = np.array([0,0,180])
+                    upper_red = np.array([50,120,255])
+
+                    lower_white = np.array([170,150,150])
+                    upper_white = np.array([255,255,255])
 
                     # Threshold the HSV image to get only blue colors
-                    edges = cv2.inRange(hsv, lower_yellow, upper_yellow) #0.03s
+                    # edges = cv2.inRange(hsv, lower_yellow, upper_yellow) #0.03s
+                    # edges = cv2.inRange(hsv, lower_orange, upper_orange) #0.03s
+                    red_edges = cv2.inRange(hsv, lower_red, upper_red) #0.03s
+                    white_edges = cv2.inRange(hsv, lower_white, upper_white) #0.03s
+                    edges = cv2.bitwise_or(red_edges,white_edges)
+                    ### </ADDED CODE> ###
                     
                     #edges = cv2.cvtColor(edges, cv2.COLOR_BGR2GRAY)
                     #cv2.imshow("hsv to gray",edges)
                     #cv2.imshow("Edges",edges[270:480,:])
-                    ####edges = cv2.GaussianBlur(edges,(kernel_size,kernel_size),0)
+                    edges = cv2.GaussianBlur(edges,(kernel_size,kernel_size),0)
                     #edges = cv2.Canny(edges,10,200)
                     #######cv2.imshow("Edges2",edges[270:480,:])
                     edgescropped = edges
@@ -163,7 +176,7 @@ class image_processing_node():
                     except:# CvBridgeError as e:
                         pass#print(e)
 
-                if (self.count >100 and self.count%50==0):
+                if (self.count > 100 and self.count%50==0):
                     self.incount +=1
                     self.timenext = time.time()
                     self.timeElapsed = self.timenext - self.timeprev
@@ -336,7 +349,7 @@ class image_processing_node():
         self.reference_trajectory_pub.publish(self.reference_trajectory)
         ####################################################################
         # Uncomment this next line when you are ready to use LQR
-        #self.compute_uOpt(self.reference_trajectory.x,self.reference_trajectory.y,self.v_ref)
+        self.compute_uOpt(self.reference_trajectory.x,self.reference_trajectory.y,self.v_ref)
         ####################################################################
      ######################################################################################
     def convertPixelsToDistance(self,inputarray):
