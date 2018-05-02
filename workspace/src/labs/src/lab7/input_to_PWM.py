@@ -169,7 +169,7 @@ def inputToPWM():
             elif (motor_pwm>maxspeed):
                 motor_pwm = maxspeed
 
-            if (not move or not still_moving)):
+            if (not(move) or not(still_moving)):
                 motor_pwm = 1500
                 servo_pwm = 1540
 
