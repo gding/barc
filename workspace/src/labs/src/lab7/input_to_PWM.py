@@ -156,7 +156,7 @@ def inputToPWM():
     t0          = time.time()
 
     # Initialize the PID controller
-    longitudinal_control = PID(kp=70, ki=5, kd=0)
+    longitudinal_control = PID(kp=1, ki=1, kd=0)
     maxspeed = 1700
     minspeed = 1300
 
