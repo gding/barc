@@ -35,7 +35,7 @@ class image_processing_node():
         self.h = 480
 
         # Reference velocity
-        self.v_ref = 0.1
+        self.v_ref = 1.0
 
         # Number of moving average points
         self.sx = 5
@@ -114,11 +114,11 @@ class image_processing_node():
                     # upper_orange = np.array([50,280,255])
 
                     ### RED AND WHITE LANES ###
-                    lower_red = np.array([0,0,180])
-                    upper_red = np.array([50,120,255])
+                    lower_red = np.array([0,10,60])
+                    upper_red = np.array([20,80,255])
 
-                    lower_white = np.array([170,150,150])
-                    upper_white = np.array([255,255,255])
+                    lower_white = np.array([100,120,80])
+                    upper_white = np.array([170,170,170])
 
                     # Threshold the HSV image to get only blue colors
                     # edges = cv2.inRange(hsv, lower_yellow, upper_yellow) #0.03s
@@ -155,7 +155,7 @@ class image_processing_node():
                 gamma = 0
 
                 # Colored = True makes the path show up on top of the colored image. 
-                colored = False
+                colored = True
                 if colored:
                     line_img_color = np.zeros(self.cv_image.shape, dtype=np.uint8)
                     midpointlist,leftlist,rightlist = self.draw_lines(line_img_color,edgescropped)
@@ -268,7 +268,7 @@ class image_processing_node():
         endtrack = False
 
         # Number of steps k to evenly divide the space from y_newPixel_min to y_newPixel_max
-        numpoints = 7
+        numpoints = 3
         interval = (y_newPixel_max-y_newPixel_min)//numpoints
         self.stopmoving = False
         converge_limit = 100
@@ -386,7 +386,7 @@ class image_processing_node():
                 dt = self.dt
                 lr = 0.15
                 lf = 0.15
-                j = 3
+                j = 1
                 interval = 1
                 x_ref_for_radius = [x_ref[j+interval],x_ref[j+interval*2]]
                 y_ref_for_radius = [y_ref[j+interval],y_ref[j+interval*2]]

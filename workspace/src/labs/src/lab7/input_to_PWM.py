@@ -38,7 +38,8 @@ def enc_callback(data):
     n_BR = data.BR
 
     # compute the average encoder measurement
-    n_mean = (n_FL + n_FR)/2
+    # n_mean = (n_FL + n_FR)/2
+    n_mean = n_FL
 
     # transfer the encoder measurement to angular displacement
     ang_mean = n_mean*2*pi/8
@@ -103,6 +104,7 @@ class PID():
 
     def acc_calculate(self, speed_reference, speed_current):
         self.error = speed_reference - speed_current
+        print(self.error)
         
         # Propotional control
         self.P_effect = self.kp*self.error
@@ -149,6 +151,7 @@ def inputToPWM():
     subname = rospy.Subscriber('uOpt', Input, callback_function)
     rospy.Subscriber('moving', Moving, moving_callback_function)
     rospy.Subscriber('encoder', Encoder, enc_callback)
+
     # set node rate
     loop_rate   = 40
     ts          = 1.0 / loop_rate
@@ -156,7 +159,7 @@ def inputToPWM():
     t0          = time.time()
      
     # Initialize the PID controller
-    longitudinal_control = PID(kp=70, ki=5, kd=0)
+    longitudinal_control = PID(kp=50, ki=1, kd=1)
     maxspeed = 1700
     minspeed = 1300
 
