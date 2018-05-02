@@ -38,12 +38,8 @@ def enc_callback(data):
     n_BR = data.BR
 
     # compute the average encoder measurement
-<<<<<<< 788354075b30aed3675601a88ef2edc39a62e611
     # n_mean = (n_FL + n_FR)/2
     n_mean = n_FL
-=======
-    n_mean = (n_FL + n_FR)/2
->>>>>>> old
 
     # transfer the encoder measurement to angular displacement
     ang_mean = n_mean*2*pi/8
@@ -167,11 +163,15 @@ def inputToPWM():
     t0          = time.time()
 
     # Initialize the PID controller
+<<<<<<< 757167d896b6371fb5dbed97618d7242e68cdfb9
 <<<<<<< 788354075b30aed3675601a88ef2edc39a62e611
     longitudinal_control = PID(kp=50, ki=1, kd=1)
 =======
     longitudinal_control = PID(kp=70, ki=5, kd=0)
 >>>>>>> old
+=======
+    longitudinal_control = PID(kp=1, ki=1, kd=0)
+>>>>>>> otaku
     maxspeed = 1700
     minspeed = 1300
 
