@@ -35,7 +35,7 @@ class image_processing_node():
         self.h = 480
 
         # Reference velocity
-        self.v_ref = 0.5
+        self.v_ref = 0.1
 
         # Number of moving average points
         self.sx = 5
@@ -349,7 +349,7 @@ class image_processing_node():
         self.reference_trajectory_pub.publish(self.reference_trajectory)
         ####################################################################
         # Uncomment this next line when you are ready to use LQR
-        #self.compute_uOpt(self.reference_trajectory.x,self.reference_trajectory.y,self.v_ref)
+        self.compute_uOpt(self.reference_trajectory.x,self.reference_trajectory.y,self.v_ref)
         ####################################################################
      ######################################################################################
     def convertPixelsToDistance(self,inputarray):
