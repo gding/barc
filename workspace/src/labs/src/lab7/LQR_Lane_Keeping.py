@@ -109,25 +109,13 @@ class image_processing_node():
 
                     #hsv = cv2.GaussianBlur(hsv,(kernel_size,kernel_size),0)
                     #cv2.imshow('hsv',self.hsv[270:480,:])
-                    """
+                    
                     # define range of blue color in HSV (B,G,R)
-                    lower_red = np.array([0,0,180])
-                    upper_red = np.array([130,80,255])
+                    lower_red = np.array([0,10,60])
+                    upper_red = np.array([20,80,160])
 
-                    lower_white = np.array([0,200,200])
-                    upper_white = np.array([80,255,255])
-
-                    # Threshold the HSV image to get only blue colors
-                    self.reds = cv2.inRange(self.hsv, lower_red, upper_red)
-                    self.whites = cv2.inRange(self.hsv, lower_white, upper_white) #0.03s
-                    """
-
-                    # define range of blue color in HSV (B,G,R)
-                    lower_red = np.array([0,0,180])
-                    upper_red = np.array([50,120,255])
-
-                    lower_white = np.array([170,150,150])
-                    upper_white = np.array([255,255,255])
+                    lower_white = np.array([100,120,80])
+                    upper_white = np.array([170,170,170])
 
                     # Threshold the HSV image to get only blue colors
                     self.reds = cv2.inRange(self.cv_image, lower_red, upper_red)
@@ -156,7 +144,7 @@ class image_processing_node():
                 gamma = 0
 
                 # Colored = True makes the path show up on top of the colored image. 
-                colored = False
+                colored = True
                 if colored:
                     self.line_img_color = np.zeros(self.cv_image.shape, dtype=np.uint8)
                     self.LinesDrawn2_color = cv2.addWeighted(self.cv_image,alpha,self.line_img_color,beta,gamma)
