@@ -8,11 +8,7 @@ import time
 import roslib
 import sys
 import cv2
-import matplotlib
-import matplotlib.pyplot as plt
 import numpy as np
-
-import os
 
 # state estimation node
 class camera_node():
@@ -48,15 +44,14 @@ class camera_node():
             self.cv_image = cv2.remap(self.dst,self.mapx,self.mapy,cv2.INTER_LINEAR) #Undistorts the fisheye image to rectangular
             self.x,self.y,self.w,self.h = self.roi
             self.dst = self.dst[self.y:self.y+self.h, self.x:self.x+self.w]
-		
-	    # Write camera frames to path
-	    img_dir = os.path.join('/home/odroid/camera_frames/', 'img'+str(self.img_num)+'.png')
-	    plt.imsave(img_dir, self.cv_image)
-	    self.img_num+=1
 
-	    # Show camera frames
+	    # cv2.imwrite('~/video_dir_temp/img  img_dir = '~/video_dir_temp/img'+str(self.img_num)+'.bmp'
+	    cv2.imwrite(img_dir, self.cv_image)
+	    self.img_num += 1
 	    # cv2.imshow('Camera View',self.cv_image)
-            # cv2.waitKey(3) # Waitkey is necesarry to update image
+
+            # Waitkey is necesarry to update image
+            # cv2.waitKey(3)
 
             self.rate.sleep()
 

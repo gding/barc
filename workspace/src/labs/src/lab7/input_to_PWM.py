@@ -85,7 +85,7 @@ def moving_callback_function(data):
 def callback_function(data):
     global move, still_moving, v_ref, servo_pwm
     v_ref = data.vel
-    servo_pwm = (data.delta*180/3.1415-53.6364)/-0.0346
+    servo_pwm = (-data.delta*180/3.1415-283)/-.1846#(data.delta*180/3.1415-272)/-.1846 + 1500 #-283.5157)/-0.1846
 
     servomax = 1800
     servomin = 1200
@@ -146,7 +146,7 @@ def inputToPWM():
     move = False
     still_moving = False
     #print("1")
-    #print(move)
+    print(move)
     # topic subscriptions / publications
     pubname = rospy.Publisher('ecu_pwm',ECU, queue_size = 2)
     rospy.Subscriber('turtle1/cmd_vel', Twist, start_callback)
@@ -160,9 +160,9 @@ def inputToPWM():
     t0          = time.time()
 
     # Initialize the PID controller
-    longitudinal_control = PID(kp=70, ki=5, kd=1)
+    longitudinal_control = PID(kp=70, ki=.1, kd=0)
     maxspeed = 1700
-    minspeed = 1400
+    minspeed = 1400#1400
 
     while not rospy.is_shutdown():
         try:
