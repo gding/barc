@@ -20,8 +20,8 @@ from controlpy import analysis
 
 # state estimation node
 class image_processing_node():
-    def __init__(self):    
-        
+    def __init__(self):
+
         self.vid = cv2.VideoCapture("/dev/video6")
         self.vid.set(12,5) #contrast
         self.vid.set(13,255) #saturation
@@ -29,7 +29,7 @@ class image_processing_node():
         # Calibration Matrices
         self.mtx = np.array([[592.156892, 0.000000, 326.689246], [0.000000, 584.923917, 282.822026], [0.000000, 0.000000, 1.000000]])
         self.dist = np.array([-0.585868, 0.248490, -0.023236, -0.002907, 0.000000])
-        self.rel,self.dst = self.vid.read() 
+        self.rel,self.dst = self.vid.read()
         # Camera resolution
         self.w = 640
         self.h = 480
@@ -50,11 +50,11 @@ class image_processing_node():
 
         self.dt = self.ts
         self.count = 0
-        self.incount = 0 
-        self.total = 0 
-        self.avg = 0 
-        self.total2 = 0 
-        self.avg2 = 0 
+        self.incount = 0
+        self.total = 0
+        self.avg = 0
+        self.total2 = 0
+        self.avg2 = 0
         self.publish_image = False;
         self.timeprev = time.time()-self.dt
         time.sleep(0.5)
@@ -94,7 +94,7 @@ class image_processing_node():
 
                 self.cv_image = cv2.remap(self.dst,self.mapx,self.mapy,cv2.INTER_LINEAR) #Undistorts the fisheye image to rectangular
                 self.x,self.y,self.w,self.h = self.roi
-                self.dst = self.dst[self.y:self.y+self.h, self.x:self.x+self.w]      
+                self.dst = self.dst[self.y:self.y+self.h, self.x:self.x+self.w]
 
                 # yellow = True makes the edge detection search for a yellow track using HSV. False will use grayscale and search for any edge regardless of color
                 yellow = True
@@ -105,11 +105,11 @@ class image_processing_node():
                     ########cropped = cv2.GaussianBlur(cropped,(kernel_size,kernel_size),0) #0.017s
                     #cropped = cv2.medianBlur(cropped,kernel_size)
 
-                    self.hsv = cv2.cvtColor(cropped, cv2.COLOR_BGR2HSV) #.004 
+                    self.hsv = cv2.cvtColor(cropped, cv2.COLOR_BGR2HSV) #.004
 
                     #hsv = cv2.GaussianBlur(hsv,(kernel_size,kernel_size),0)
                     #cv2.imshow('hsv',self.hsv[270:480,:])
-                    
+
                     # define range of blue color in HSV (B,G,R)
                     lower_red = np.array([0,10,60])
                     upper_red = np.array([20,80,255])
@@ -143,12 +143,12 @@ class image_processing_node():
                 beta = 1.
                 gamma = 0
 
-                # Colored = True makes the path show up on top of the colored image. 
+                # Colored = True makes the path show up on top of the colored image.
                 colored = True
                 if colored:
                     self.line_img_color = np.zeros(self.cv_image.shape, dtype=np.uint8)
                     self.LinesDrawn2_color = cv2.addWeighted(self.cv_image,alpha,self.line_img_color,beta,gamma)
-                else: 
+                else:
                     self.edges_color = cv2.cvtColor(self.edges, cv2.COLOR_GRAY2RGB)
                     self.line_img_color = np.zeros(self.edges_color.shape, dtype=np.uint8)
                     self.LinesDrawn2_color = cv2.addWeighted(self.edges_color,alpha,self.line_img_color,beta,gamma)
@@ -160,7 +160,7 @@ class image_processing_node():
 
                 fontFace = cv2.FONT_HERSHEY_TRIPLEX
                 #self.publish_states(midpointlist,leftlist,rightlist)
-                
+
                 if self.publish_image:
                     try:
                         self.reference_image_pub.publish(self.bridge.cv2_to_imgmsg(self.LinesDrawn2_color, "bgr8"))
@@ -178,7 +178,7 @@ class image_processing_node():
 
                 # Waitkey is necesarry to update image
                 ######cv2.waitKey(3)
-     
+
                 self.rate.sleep()
             except IOError, (ErrorNumber, ErrorMessage):
                 print('HERE')
@@ -221,7 +221,7 @@ class image_processing_node():
                     leftbound = x_left-boxsize
                     if leftbound <0:
                         leftbound=0
-                    
+
                     Top = img[y_left-boxsize,np.arange(leftbound,x_left+boxsize)]
                     Bottom = img[y_left+boxsize,np.arange(leftbound,x_left+boxsize)]
                     Right = img[np.arange(y_left-boxsize,y_left+boxsize),x_left+boxsize]
@@ -264,8 +264,8 @@ class image_processing_node():
         color=[0, 0,255 ]
         img = self.line_img_color
         self.edges = self.edge_inloop
-        height, width = self.edges.shape 
-        index_x = (width)//2        
+        height, width = self.edges.shape
+        index_x = (width)//2
         offset = 0
         previous_x = index_x
 
@@ -283,7 +283,7 @@ class image_processing_node():
         converge_limit = 100
         i=0
         dt = self.avg2#self.dt
-        
+
         forward_offset = 1.2 #My forward offset is 1.2 feet because I took my camera points with reference to the center of mass of the car
 
         for k in xrange(1,numpoints+1,1):
@@ -292,7 +292,7 @@ class image_processing_node():
 
             #y_base in xrange(y_newPixel_min,y_newPixel_max,interval):
             #y_base = 150 #20 # this represents 3" in front of the car
-            index_y = height - y_base 
+            index_y = height - y_base
             index_x = previous_x
             #print(k)
             #print(xIforward)
@@ -303,7 +303,7 @@ class image_processing_node():
             #print('')
 
             x_left, x_right,y_left,y_right = self.find_offset_in_lane(self.edges, index_x, index_y, width)
-            
+
             #print(x_left)
             #print(x_right)
             #print(y_left)
@@ -336,7 +336,7 @@ class image_processing_node():
                 midpointlist = np.concatenate((midpointlist,midpts))
                 leftlist = np.concatenate((leftlist,leftpts))
                 rightlist = np.concatenate((rightlist,rightpts))
-            if (not(k==1)): 
+            if (not(k==1)):
                 cv2.line(self.LinesDrawn2_color, (midpointx, midpointy),(previous_x, previous_y), (0,255,255),3)
             cv2.circle(self.LinesDrawn2_color, (x_right,y_right), 4, (0,255,255), -1)
             cv2.circle(self.LinesDrawn2_color, (x_left,  y_left), 4, (0,255,255), -1)
@@ -362,13 +362,13 @@ class image_processing_node():
         self.publish_states_pub.publish(True)
 
     def publish_states(self,data):
-        midpointlist = self.midpointlist_inloop 
+        midpointlist = self.midpointlist_inloop
         leftlist = self.leftlist_inloop
         rightlist =  self.rightlist_inloop
 
         midpointlist[:,0] = midpointlist[:,0]-320 # Convert x_pixel to x_newpixel
         midpointlist[:,1] = 480-midpointlist[:,1] # Convert y_pixel to y_newpixel
-        if ((self.count == 5) and self.printme): 
+        if ((self.count == 5) and self.printme):
             print("\nReference Trajectory")
             print(midpointlist)
 
@@ -384,7 +384,7 @@ class image_processing_node():
         #self.reference_trajectory.psi = midlistpsi.tolist()
         if ((self.count == 5) and self.printme):
             print(self.reference_trajectory)
-        
+
         self.reference_trajectory_pub.publish(self.reference_trajectory)
         ####################################################################
         # Uncomment this next line when you are ready to use LQR
@@ -399,18 +399,18 @@ class image_processing_node():
         y_newPixel_list = inputarray[:,1]
         transformed_y_Inertial_list = np.float32(x_newPixel_list)
         transformed_x_Inertial_list = np.float32(y_newPixel_list)
-        
+
         for i in np.arange(len(x_newPixel_list)):
             x = x_newPixel_list[i]
             y = y_newPixel_list[i]
-           
+
             transformed_y_Inertial_list[i] = self.calc_x_newPixel_to_y_Inertial(x,y) #number of xpixels from center divided by xpixels per foot
             transformed_x_Inertial_list[i] = self.calc_y_newPixel_to_x_Inertial(y)
         return transformed_x_Inertial_list,transformed_y_Inertial_list
 
     def calc_x_newPixel_to_y_Inertial(self,x_newPixel,y_newPixel):
         # Transforms the xnewpixel into yinertial frame
-        #y_Inertial = -x_newPixel/(-1.5*y_newPixel+342) 
+        #y_Inertial = -x_newPixel/(-1.5*y_newPixel+342)
         x_Inertial = self.calc_y_newPixel_to_x_Inertial(y_newPixel)/0.3048
         y_Inertial = (x_newPixel-self.f2(x_Inertial))/self.b_eq(x_Inertial)
         y_newPixelskewed = self.f1(y_Inertial)
@@ -449,7 +449,7 @@ class image_processing_node():
             if not(self.stopmoving):
                 """
                 READ MEEEEEEE #############################################
-                j = the first point you look at for the reference trajectory (for radius calculation) so j = 2 for example, you look at the 3rd closest point 
+                j = the first point you look at for the reference trajectory (for radius calculation) so j = 2 for example, you look at the 3rd closest point
                 interval = the number that is added to j for the subsequent point (for radius calculation). So if j = 2, interval = 4.... the points we observe are the 3rd, 7th and 11th
 
                 Play around with this values to adjust how far you look ahead to calculate the next optimal input. (Recall there is some time delay so you may want to send an input from the future)
@@ -458,7 +458,7 @@ class image_processing_node():
                 lr = 0.15
                 lf = 0.15
                 j = 4
-                interval = 1
+                interval = 4
                 x_ref_for_radius = [x_ref[j+interval],x_ref[j+interval*2]]
                 y_ref_for_radius = [y_ref[j+interval],y_ref[j+interval*2]]
                 x_ref_for_radius = np.append(x_ref[j],x_ref_for_radius)
