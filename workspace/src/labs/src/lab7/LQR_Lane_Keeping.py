@@ -457,7 +457,7 @@ class image_processing_node():
                 dt = self.avg2#self.dt
                 lr = 0.15
                 lf = 0.15
-                j = 2 # 4 
+                j = 4 # 4
                 interval = 4 # 1
                 x_ref_for_radius = [x_ref[j+interval],x_ref[j+interval*2]]
                 y_ref_for_radius = [y_ref[j+interval],y_ref[j+interval*2]]
