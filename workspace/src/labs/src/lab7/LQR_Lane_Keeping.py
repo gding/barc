@@ -112,7 +112,7 @@ class image_processing_node():
                     
                     # define range of blue color in HSV (B,G,R)
                     lower_red = np.array([0,10,60])
-                    upper_red = np.array([20,80,160])
+                    upper_red = np.array([20,80,255])
 
                     lower_white = np.array([100,120,80])
                     upper_white = np.array([170,170,170])
